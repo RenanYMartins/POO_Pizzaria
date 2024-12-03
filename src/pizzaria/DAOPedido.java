@@ -20,20 +20,6 @@ public class DAOPedido {
         return null;
     }
 
-    public String listAll() {
-        StringBuilder report = new StringBuilder();
-        for (Pedido pedido : databasePedido) {
-            report.append("Pedido ID: ").append(pedido.getId()).append("\n");
-            report.append("Pizzas:\n");
-            for (Pizza pizza : pedido.getPizzasPedido()) {
-                report.append("  - Sabor: ").append(pizza.getSabor())
-                      .append(", Valor: R$ ").append(pizza.getValor()).append("\n");
-            }
-            report.append("--------------------------------------\n");
-        }
-        return report.toString();
-    }
-
     public boolean update(Pedido pedidoAtualizado) {
         Pedido pedidoExistente = read(pedidoAtualizado.getId());
         if (pedidoExistente != null) {
