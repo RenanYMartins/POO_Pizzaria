@@ -2,6 +2,7 @@ package pizzaria;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Pizzaria {
@@ -11,8 +12,13 @@ public class Pizzaria {
      */
     public static void main(String[] args) {
         DAOPedido daoPedido = new DAOPedido();
+        DAODiaDeTrabalho daoDiaDeTrabalho = new DAODiaDeTrabalho();
+        Relatorio relatorio = new Relatorio(daoPedido, daoDiaDeTrabalho);
         boolean continuarPedidos = true;
-        Scanner scanner = new Scanner(System.in);  // Instancia o Scanner aqui
+        Scanner scanner = new Scanner(System.in);
+
+        DiaDeTrabalho diaAtual = new DiaDeTrabalho(new Date());
+        daoDiaDeTrabalho.create(diaAtual);
 
         List<Pizza> pizzas = new ArrayList<>();
         pizzas.add(new PizzaPortuguesa(52.00));
@@ -21,12 +27,13 @@ public class Pizzaria {
 
         while (continuarPedidos) {
             System.out.println("Iniciando novo pedido.");
-            List<Pizza> pizzasSelecionadas = exibirMenu(pizzas, scanner);  // Passa o scanner como argumento
+            List<Pizza> pizzasSelecionadas = exibirMenu(pizzas, scanner);
 
             if (pizzasSelecionadas.isEmpty()) {
                 System.out.println("Nenhuma pizza selecionada para este pedido.");
             } else {
                 Pedido novoPedido = new Pedido(daoPedido.getNextId(), pizzasSelecionadas);
+                diaAtual.adicionarPedido(novoPedido);
                 daoPedido.create(novoPedido);
                 System.out.println("Pedido adicionado com sucesso!");
             }
@@ -38,9 +45,12 @@ public class Pizzaria {
 
         System.out.println("Finalizando sistema de pedidos.");
         System.out.println("Relatório de todos os pedidos:");
-        System.out.println(daoPedido.listAllPedidos());
+        // System.out.println(daoPedido.listAllPedidos());
 
-        scanner.close();  
+        System.out.println(relatorio.gerarRelatorioPizzasPorCliente());
+        System.out.println(relatorio.gerarRelatorioPedidosPorData());
+
+        scanner.close();
     }
 
     public static List<Pizza> exibirMenu(List<Pizza> pizzas, Scanner scanner) {
